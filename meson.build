@@ -15,16 +15,16 @@ endif
 
 # Symbol visibility on *nix
 if (cc.has_argument('-fvisibility=hidden'))
-  add_project_arguments('-fvisibility=hidden', language: ['c', 'cpp'])
-  add_project_link_arguments('-fvisibility=hidden', language: ['c', 'cpp'])
+  add_project_arguments('-fvisibility=hidden', language: ['c', 'cpp', 'objc'])
+  add_project_link_arguments('-fvisibility=hidden', language: ['c', 'cpp', 'objc'])
 endif
 
 # Disable some warnings
 if (cc.has_argument('-Wno-unused-parameter'))
-  add_project_arguments('-Wno-unused-parameter', language: ['c', 'cpp'])
+  add_project_arguments('-Wno-unused-parameter', language: ['c', 'cpp', 'objc'])
 endif
 if (cc.has_argument('-Wno-switch'))
-  add_project_arguments('-Wno-switch', language: ['c', 'cpp'])
+  add_project_arguments('-Wno-switch', language: ['c', 'cpp', 'objc'])
 endif
 
 libui_src = []
@@ -37,7 +37,7 @@ install_headers('ui.h')
 subdir('common')
 if (host_machine.system() == 'darwin')
   install_headers('ui_darwin.h')
-#  subdir(system)
+  subdir('darwin')
 elif (host_machine.system() == 'windows')
   install_headers('ui_windows.h')
 #  subdir('window')
@@ -49,6 +49,8 @@ endif
 # TODO: Set soversion/version for shared libraries!
 libui = library('ui', libui_src,
                 dependencies: libui_deps,
+                c_args: '-Dlibui_EXPORTS',
+                objc_args: '-Dlibui_EXPORTS',
                 install: true)
 libui_dep = declare_dependency(link_with: libui,
                                include_directories: libui_inc,
@@ -56,6 +58,5 @@ libui_dep = declare_dependency(link_with: libui,
                                dependencies: libui_deps,
                                version: meson.project_version())
 
-# TODO: These don't work with shared libraries?
 subdir('test')
 subdir('examples')

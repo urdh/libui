@@ -31,5 +31,5 @@ test_inc = include_directories('.')
 tester = executable('tester', test_src + resources,
                     include_directories: test_inc,
                     dependencies: libui_dep,
-                    gui_app: true,
+                    gui_app: false,
                     install: false)
